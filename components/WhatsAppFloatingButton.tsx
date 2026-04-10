@@ -1,4 +1,11 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 export default function WhatsAppFloatingButton() {
+    const pathname = usePathname();
+    if (pathname?.startsWith('/operator')) return null;
+
     return (
         <a
             href="https://wa.me/+201115503050"
