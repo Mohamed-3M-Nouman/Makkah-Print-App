@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Search, Calendar, Filter } from "lucide-react";
 import HistoryOrderCard from "@/components/operator/HistoryOrderCard";
+import OrderDetailsSheet from "@/components/operator/OrderDetailsSheet";
+import ReceiptDialog from "@/components/operator/ReceiptDialog";
 import { mockOrders, Order } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,7 +27,8 @@ const historyMockData: Order[] = [
                 pageCount: 15,
                 color: "bw",
                 sides: "single",
-                binding: "staple",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 3,
                 itemPrice: 45.00
             }
@@ -50,7 +53,8 @@ const historyMockData: Order[] = [
                 pageCount: 50,
                 color: "color",
                 sides: "single",
-                binding: "none",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 1,
                 itemPrice: 150.00
             }
@@ -68,6 +72,24 @@ export default function CompletedOrdersPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [dateFilter, setDateFilter] = useState("all");
+    
+    // Order Details Sheet State
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+    // Receipt Dialog State
+    const [selectedReceiptOrder, setSelectedReceiptOrder] = useState<Order | null>(null);
+    const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+
+    const handleOpenDetails = (order: Order) => {
+        setSelectedOrder(order);
+        setIsSheetOpen(true);
+    };
+
+    const handleOpenReceipt = (order: Order) => {
+        setSelectedReceiptOrder(order);
+        setIsReceiptOpen(true);
+    };
 
     // Filter only completed/delivered orders
     const completedOrders = historyMockData.filter(o =>
@@ -137,7 +159,12 @@ export default function CompletedOrdersPage() {
                 {filteredOrders.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
                         {filteredOrders.map((order) => (
-                            <HistoryOrderCard key={order.id} order={order} />
+                            <HistoryOrderCard 
+                                key={order.id} 
+                                order={order} 
+                                onDetailsClick={() => handleOpenDetails(order)} 
+                                onReceiptClick={() => handleOpenReceipt(order)}
+                            />
                         ))}
                     </div>
                 ) : (
@@ -149,6 +176,24 @@ export default function CompletedOrdersPage() {
                     </div>
                 )}
             </div>
+
+            {selectedOrder && (
+                <OrderDetailsSheet 
+                    isOpen={isSheetOpen} 
+                    onClose={() => setIsSheetOpen(false)} 
+                    order={selectedOrder} 
+                    // Noop for now unless requested
+                    onUpdateStatus={() => {}}
+                />
+            )}
+
+            {selectedReceiptOrder && (
+                <ReceiptDialog
+                    isOpen={isReceiptOpen}
+                    onClose={() => setIsReceiptOpen(false)}
+                    order={selectedReceiptOrder}
+                />
+            )}
         </>
     );
 }

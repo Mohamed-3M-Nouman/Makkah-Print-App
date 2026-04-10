@@ -124,3 +124,51 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  /* 1. Force paper size to 80mm (Standard Thermal Printer) */
+  @page {
+    margin: 0;
+    size: 80mm auto;
+  }
+
+  /* 2. Hide everything in the body EXCEPT the Shadcn/Radix portal */
+  body > *:not([data-radix-portal]) {
+    display: none !important;
+  }
+
+  /* 3. Strip Dialog overlays & fixed positioning to restore standard document flow */
+  [data-radix-portal],
+  [data-radix-portal] > div {
+    background: transparent !important;
+    display: block !important;
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  /* 4. Reset the dialog container to act as the raw 80mm paper */
+  [role="dialog"] {
+    position: static !important;
+    transform: none !important;
+    max-width: 100% !important;
+    width: 80mm !important;
+    margin: 0 !important;
+    padding: 5mm !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 5. Hide ALL buttons (including the print/close buttons) during printing */
+  button {
+    display: none !important;
+  }
+
+  /* 6. Force browsers to print borders (dashed lines), backgrounds, and exact colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

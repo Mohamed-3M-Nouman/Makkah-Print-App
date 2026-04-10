@@ -11,10 +11,10 @@ export interface OrderItem {
     type: "document" | "image_batch";
     pageCount: number;
     color: "bw" | "color";
-    inkType?: string;
+    inkType?: "laser" | "inkjet";
+    pagesPerSheet: number;
     sides: "single" | "double";
-    binding: string;
-    staplePosition?: string;
+    printRange: string;
     quantity: number;
     itemPrice?: number;
 }
@@ -49,7 +49,8 @@ export const mockOrders: Order[] = [
                 pageCount: 10,
                 color: "bw",
                 sides: "double",
-                binding: "staple",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 5,
                 itemPrice: 25.00
             }
@@ -72,8 +73,10 @@ export const mockOrders: Order[] = [
                 type: "document",
                 pageCount: 15,
                 color: "color",
+                inkType: "laser",
                 sides: "single",
-                binding: "none",
+                pagesPerSheet: 4,
+                printRange: "1-10",
                 quantity: 10,
                 itemPrice: 45.00
             },
@@ -83,7 +86,8 @@ export const mockOrders: Order[] = [
                 pageCount: 2,
                 color: "color",
                 sides: "single",
-                binding: "none",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 1,
                 itemPrice: 15.00
             }
@@ -107,7 +111,8 @@ export const mockOrders: Order[] = [
                 pageCount: 50,
                 color: "bw",
                 sides: "double",
-                binding: "wire",
+                pagesPerSheet: 2,
+                printRange: "الكل",
                 quantity: 3,
                 itemPrice: 85.00
             }
@@ -131,7 +136,8 @@ export const mockOrders: Order[] = [
                 pageCount: 3,
                 color: "color",
                 sides: "single",
-                binding: "none",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 20,
                 itemPrice: 20.00
             }

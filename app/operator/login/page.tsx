@@ -21,6 +21,7 @@ export default function OperatorLoginPage() {
         // Simulate API call
         setTimeout(() => {
             setIsLoading(false);
+            document.cookie = "user_role=operator; path=/";
             router.push('/operator/dashboard');
         }, 1500);
     };

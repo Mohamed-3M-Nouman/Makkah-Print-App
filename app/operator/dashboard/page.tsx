@@ -21,7 +21,8 @@ const extendedMockOrders: Order[] = [
                 pageCount: 45,
                 color: "color",
                 sides: "single",
-                binding: "spiral",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 1,
                 itemPrice: 150.00
             }
@@ -46,7 +47,8 @@ const extendedMockOrders: Order[] = [
                 pageCount: 2,
                 color: "bw",
                 sides: "single",
-                binding: "none",
+                pagesPerSheet: 1,
+                printRange: "الكل",
                 quantity: 10,
                 itemPrice: 20.00
             }

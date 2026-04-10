@@ -8,19 +8,25 @@ import { Order } from "@/lib/mockData";
 
 interface HistoryOrderCardProps {
     order: Order;
+    onDetailsClick?: () => void;
+    onReceiptClick?: () => void;
 }
 
-export default function HistoryOrderCard({ order }: HistoryOrderCardProps) {
+export default function HistoryOrderCard({ order, onDetailsClick, onReceiptClick }: HistoryOrderCardProps) {
     // Helper to summarize specs
     const getSpecsSummary = () => {
-        const totalItems = order.items.length;
         const firstItem = order.items[0];
-        const colorText = firstItem.color === 'bw' ? 'أبيض وأسود' : 'ألوان';
-        const typeText = firstItem.type === 'document' ? 'مستند' : 'صور';
+        if (!firstItem) return "لا يوجد عناصر";
 
-        let summary = `${firstItem.quantity} نسخة • ${colorText}`;
-        if (totalItems > 1) {
-            summary += ` • +${totalItems - 1} أصناف أخرى`;
+        const colorText = firstItem.color === 'color' ? `ألوان (${firstItem.inkType === 'laser' ? 'ليزر' : 'مائي'})` : 'أبيض وأسود';
+        const sidesText = firstItem.sides === 'double' ? 'وجهين' : 'وجه واحد';
+        const pagesSuffix = firstItem.pagesPerSheet ? ` (${firstItem.pagesPerSheet} صفحة)` : '';
+        const rangeText = `نطاق: ${firstItem.printRange || 'الكل'}`;
+        const qtyText = `${firstItem.quantity} نسخ`;
+
+        let summary = `${colorText} | ${sidesText}${pagesSuffix} | ${rangeText} | ${qtyText}`;
+        if (order.items.length > 1) {
+            summary += ` (+${order.items.length - 1})`;
         }
         return summary;
     };
@@ -59,15 +65,15 @@ export default function HistoryOrderCard({ order }: HistoryOrderCardProps) {
 
                 {/* Specs Summary */}
                 <div className="bg-slate-50 rounded-lg p-3 border border-slate-100 flex items-center gap-3">
-                    <Printer className="w-4 h-4 text-slate-400" />
-                    <p className="text-xs font-bold text-slate-600 truncate flex-1">
+                    <Printer className="w-4 h-4 text-slate-400 shrink-0" />
+                    <p className="text-[11px] font-bold text-slate-600 truncate flex-1 leading-relaxed">
                         {getSpecsSummary()}
                     </p>
                 </div>
 
                 {/* Footer Actions */}
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-50">
-                    <Button variant="outline" size="sm" className="w-full text-xs font-bold h-9 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                    <Button variant="outline" size="sm" className="w-full text-xs font-bold h-9 border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900" onClick={onDetailsClick}>
                         <FileText className="w-3.5 h-3.5 ml-1.5" />
                         التفاصيل
                     </Button>
@@ -75,7 +81,13 @@ export default function HistoryOrderCard({ order }: HistoryOrderCardProps) {
                         <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg" title="إعادة طباعة">
                             <RotateCcw className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:text-green-700 hover:bg-green-50 rounded-lg" title="فاتورة">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-9 w-9 text-slate-400 hover:text-green-700 hover:bg-green-50 rounded-lg" 
+                            title="فاتورة"
+                            onClick={onReceiptClick}
+                        >
                             <Receipt className="w-4 h-4" />
                         </Button>
                     </div>

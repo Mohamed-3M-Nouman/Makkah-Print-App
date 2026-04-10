@@ -22,7 +22,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/home', request.url));
     }
 
-    // 4. Fallback to original Supabase Logic (updates session if needed)
+    // 4. Protect Operator Routes
+    if (pathname.startsWith('/operator') && pathname !== '/operator/login' && !userRole) {
+        return NextResponse.redirect(new URL('/operator/login', request.url));
+    }
+
+    // 5. Fallback to original Supabase Logic (updates session if needed)
     return await updateSession(request);
 }
 

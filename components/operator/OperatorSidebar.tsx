@@ -43,7 +43,7 @@ export default function OperatorSidebar() {
     const widthClass = isCollapsed ? "w-20" : "w-60";
 
     const handleLogout = () => {
-        // Simple mock logout redirection
+        document.cookie = "user_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         router.push("/operator/login");
     };
 
@@ -61,7 +61,7 @@ export default function OperatorSidebar() {
                 </button>
             )}
 
-            <aside className={`fixed inset-y-0 right-0 z-50 ${widthClass} bg-slate-900 text-white transform transition-all duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 lg:static flex flex-col shadow-2xl header-admin font-sans`} dir="rtl">
+            <aside className={`fixed inset-y-0 right-0 z-50 ${widthClass} shrink-0 h-screen bg-slate-900 text-white flex flex-col shadow-2xl transition-all duration-300 lg:static`} dir="rtl">
             {/* Header */}
             <div className="h-20 border-b border-slate-800 flex items-center px-4 justify-between bg-slate-950/50">
                 <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
@@ -145,7 +145,7 @@ export default function OperatorSidebar() {
                     </DropdownMenuTrigger>
                     
                     <DropdownMenuContent className="w-56 font-sans font-bold" align={isCollapsed ? "center" : "end"} side="right" sideOffset={18}>
-                        <DropdownMenuItem className="gap-2 cursor-pointer transition-colors focus:bg-slate-100 h-10" onClick={() => alert("سيتم فتح الإعدادات والسمات هنا.")}>
+                        <DropdownMenuItem className="gap-2 cursor-pointer transition-colors focus:bg-slate-100 h-10" onClick={() => router.push('/operator/settings')}>
                             <Settings className="w-4 h-4 text-slate-500" />
                             الإعدادات
                         </DropdownMenuItem>
