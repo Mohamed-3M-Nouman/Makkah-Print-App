@@ -14,6 +14,7 @@ export default function SettingsPage() {
     const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
 
     const handlePricingSave = () => {
+        // TODO: Send updated pricing to Supabase database
         alert("تم حفظ أسعار الطباعة بنجاح!");
     };
 

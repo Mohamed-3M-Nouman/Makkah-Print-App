@@ -22,9 +22,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/home', request.url));
     }
 
-    // 4. Protect Operator Routes
-    if (pathname.startsWith('/operator') && pathname !== '/operator/login' && !userRole) {
-        return NextResponse.redirect(new URL('/operator/login', request.url));
+    // 4. Protect Operator Routes (Strict Role Check)
+    if (pathname.startsWith('/operator') && pathname !== '/operator/login') {
+        if (userRole !== 'operator') {
+            console.log('Unauthorized Access to Operator Dashboard. Redirecting...');
+            return NextResponse.redirect(new URL('/operator/login', request.url));
+        }
     }
 
     // 5. Fallback to original Supabase Logic (updates session if needed)

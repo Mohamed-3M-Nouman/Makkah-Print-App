@@ -21,6 +21,7 @@ export default function OperatorLoginPage() {
         // Simulate API call
         setTimeout(() => {
             setIsLoading(false);
+            // TODO: Move cookie generation to a secure Server Action with HttpOnly flag to prevent XSS
             document.cookie = "user_role=operator; path=/";
             router.push('/operator/dashboard');
         }, 1500);

@@ -4,6 +4,7 @@ import { Order } from "@/lib/mockData";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Printer, MessageCircle } from "lucide-react";
+import { PRICING_CONFIG } from "@/lib/pricing-config";
 
 interface ReceiptDialogProps {
     isOpen: boolean;
@@ -71,7 +72,7 @@ export default function ReceiptDialog({ isOpen, onClose, order }: ReceiptDialogP
                         {order.delivery === 'home' && (
                             <div className="flex justify-between items-center text-[12px]">
                                 <span>خدمة التوصيل:</span>
-                                <span className="font-bold border-b border-dashed border-slate-300 pb-1">20 ج.م</span>
+                                <span className="font-bold border-b border-dashed border-slate-300 pb-1">{PRICING_CONFIG.delivery} ج.م</span>
                             </div>
                         )}
                         <div className="flex justify-between items-center text-[12px] pt-1">
@@ -80,7 +81,7 @@ export default function ReceiptDialog({ isOpen, onClose, order }: ReceiptDialogP
                         </div>
                         <div className="flex justify-between items-center pt-2">
                             <span className="text-sm font-black">الإجمالي:</span>
-                            <span className="text-xl font-black">{order.delivery === 'home' ? order.totalPrice + 20 : order.totalPrice} ج.م</span>
+                            <span className="text-xl font-black">{order.delivery === 'home' ? order.totalPrice + PRICING_CONFIG.delivery : order.totalPrice} ج.م</span>
                         </div>
                     </div>
 
