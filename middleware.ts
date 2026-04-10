@@ -1,37 +1,82 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
-    /* SUPABASE BYPASS - MOCK CUSTOMER MIDDLEWARE */
-
-    // 1. Check for User Role Cookie
-    const userRole = request.cookies.get('user_role')?.value;
     const { pathname } = request.nextUrl;
 
-    console.log('Middleware Check:', { pathname, userRole });
+    // ----------------------------------------------------------------
+    // 1. Create Supabase client for middleware (refreshes session tokens)
+    // ----------------------------------------------------------------
+    let supabaseResponse = NextResponse.next({ request });
 
-    // 2. Generic Dashboard Protection: Users must have a role to enter /home/*
-    if (pathname.startsWith('/home') && !userRole) {
-        console.log('Access Denied to Home. Redirecting to landing page...');
-        return NextResponse.redirect(new URL('/', request.url));
-    }
-
-    // 3. Redirect logged-in users away from the landing page / login page
-    if ((pathname === '/' || pathname === '/forgot-password') && userRole) {
-        console.log('User already logged in. Redirecting to /home...');
-        return NextResponse.redirect(new URL('/home', request.url));
-    }
-
-    // 4. Protect Operator Routes (Strict Role Check)
-    if (pathname.startsWith('/operator') && pathname !== '/operator/login') {
-        if (userRole !== 'operator') {
-            console.log('Unauthorized Access to Operator Dashboard. Redirecting...');
-            return NextResponse.redirect(new URL('/operator/login', request.url));
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll();
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value }) =>
+                        request.cookies.set(name, value)
+                    );
+                    supabaseResponse = NextResponse.next({ request });
+                    cookiesToSet.forEach(({ name, value, options }) =>
+                        supabaseResponse.cookies.set(name, value, options)
+                    );
+                },
+            },
         }
+    );
+
+    // IMPORTANT: Do not add logic between createServerClient and getUser()
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    // ----------------------------------------------------------------
+    // 2. Customer routes (/home/*) — require any authenticated session
+    // ----------------------------------------------------------------
+    // Keep backward compatibility with the mock customer flow (user_role cookie)
+    const userRoleCookie = request.cookies.get("user_role")?.value;
+
+    if (pathname.startsWith("/home") && !user && !userRoleCookie) {
+        console.log("[Middleware] No session for /home. Redirecting to landing.");
+        return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // 5. Fallback to original Supabase Logic (updates session if needed)
-    return await updateSession(request);
+    // ----------------------------------------------------------------
+    // 3. Redirect logged-in customers away from landing/login
+    // ----------------------------------------------------------------
+    if ((pathname === "/" || pathname === "/forgot-password") && (user || userRoleCookie)) {
+        return NextResponse.redirect(new URL("/home", request.url));
+    }
+
+    // ----------------------------------------------------------------
+    // 4. Protect Operator Routes — require a real Supabase session
+    // ----------------------------------------------------------------
+    if (pathname.startsWith("/operator") && pathname !== "/operator/login") {
+        if (!user) {
+            console.log("[Middleware] No Supabase session for operator route. Redirecting to login.");
+            return NextResponse.redirect(new URL("/operator/login", request.url));
+        }
+        // Note: Role-level check (operator vs customer) is done in the
+        // operator layout/dashboard via a profiles table query, not here.
+        // This keeps middleware fast and avoids an extra DB call per request.
+    }
+
+    // ----------------------------------------------------------------
+    // 5. Redirect authenticated operators away from the login page
+    // ----------------------------------------------------------------
+    if (pathname === "/operator/login" && user) {
+        return NextResponse.redirect(new URL("/operator/dashboard", request.url));
+    }
+
+    // ----------------------------------------------------------------
+    // 6. Return the response (with refreshed session cookies)
+    // ----------------------------------------------------------------
+    return supabaseResponse;
 }
 
 export const config = {
@@ -43,6 +88,6 @@ export const config = {
          * - favicon.ico (favicon file)
          * - public files (images, etc)
          */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
     ],
 };

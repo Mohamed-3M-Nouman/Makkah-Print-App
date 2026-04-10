@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import {
     LayoutDashboard,
     CheckSquare,
@@ -48,9 +49,11 @@ export default function OperatorSidebar() {
     // Sidebar width classes depending on collapsed state
     const widthClass = isCollapsed ? "w-20" : "w-60";
 
-    const handleLogout = () => {
-        document.cookie = "user_role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    const handleLogout = async () => {
+        const supabase = createClient();
+        await supabase.auth.signOut();
         router.push("/operator/login");
+        router.refresh();
     };
 
     return (

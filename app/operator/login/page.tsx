@@ -3,28 +3,53 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, User, Check } from "lucide-react";
+import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "../../../components/ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/client";
 
 export default function OperatorLoginPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
+        setErrorMessage(null);
+
+        const form = e.target as HTMLFormElement;
+        const email = (form.elements.namedItem("username") as HTMLInputElement).value;
+        const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+        try {
+            const supabase = createClient();
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                console.error("[Operator Login] Auth error:", error.message);
+                setErrorMessage("بيانات الدخول غير صحيحة. يرجى المحاولة مرة أخرى.");
+                setIsLoading(false);
+                return;
+            }
+
+            // Auth successful — redirect to dashboard
+            // Middleware will handle session-based route protection
+            router.push("/operator/dashboard");
+            router.refresh();
+        } catch (err) {
+            console.error("[Operator Login] Unexpected error:", err);
+            setErrorMessage("حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.");
             setIsLoading(false);
-            // TODO: Move cookie generation to a secure Server Action with HttpOnly flag to prevent XSS
-            document.cookie = "user_role=operator; path=/";
-            router.push('/operator/dashboard');
-        }, 1500);
+        }
     };
 
     return (
@@ -55,14 +80,22 @@ export default function OperatorLoginPage() {
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
                         <form onSubmit={handleLogin} className="space-y-5">
-                            {/* Username Field */}
+                            {/* Error Message */}
+                            {errorMessage && (
+                                <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-bold px-4 py-3 rounded-xl text-center animate-in fade-in slide-in-from-top-2 duration-300">
+                                    {errorMessage}
+                                </div>
+                            )}
+
+                            {/* Email Field */}
                             <div className="space-y-2">
-                                <Label htmlFor="username" className="text-sm font-bold text-slate-700">اسم المستخدم أو البريد</Label>
+                                <Label htmlFor="username" className="text-sm font-bold text-slate-700">البريد الإلكتروني</Label>
                                 <div className="relative">
                                     <User className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                     <Input
                                         id="username"
-                                        placeholder="user@makaa.com"
+                                        type="email"
+                                        placeholder="operator@makkah.com"
                                         className="h-12 pr-10 rounded-xl border-slate-200 focus:border-green-500 focus:ring-green-500/20 bg-slate-50/50"
                                         required
                                     />
