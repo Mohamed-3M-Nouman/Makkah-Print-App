@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -28,6 +28,12 @@ export default function OperatorSidebar() {
     const router = useRouter();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    // Hydration safety for DropdownMenu which causes SSR mismatch with useId
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const isActive = (path: string) => pathname === path;
 
@@ -120,42 +126,45 @@ export default function OperatorSidebar() {
             </nav>
 
             {/* User Profile / Settings (Dropdown Menu) */}
-            <div className="p-3 border-t border-slate-800 bg-slate-950/30">
-                <DropdownMenu dir="rtl">
-                    <DropdownMenuTrigger asChild>
-                        <div 
-                            className={`flex items-center gap-3 py-2 px-3 rounded-xl bg-slate-800/50 border border-slate-800 hover:bg-slate-800 transition-colors cursor-pointer group 
-                                ${isCollapsed ? 'justify-center px-0' : ''}`}
-                            title={isCollapsed ? "ملف الموظف والإعدادات" : undefined}
-                        >
-                            <div className="w-9 h-9 min-w-[36px] bg-green-900/50 rounded-full flex items-center justify-center ring-2 ring-slate-800 group-hover:ring-green-500/30 transition-all shrink-0">
-                                <User className="w-5 h-5 text-green-500" />
-                            </div>
-                            
-                            {!isCollapsed && (
-                                <>
-                                    <div className="flex-1 min-w-0 text-right overflow-hidden whitespace-nowrap">
-                                        <p className="text-sm font-bold text-white truncate">موظف التشغيل</p>
-                                        <p className="text-xs text-slate-400 truncate">نشط الآن</p>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors transform rotate-180 shrink-0" />
-                                </>
-                            )}
-                        </div>
-                    </DropdownMenuTrigger>
-                    
-                    <DropdownMenuContent className="w-56 font-sans font-bold" align={isCollapsed ? "center" : "end"} side="right" sideOffset={18}>
-                        <DropdownMenuItem className="gap-2 cursor-pointer transition-colors focus:bg-slate-100 h-10" onClick={() => router.push('/operator/settings')}>
-                            <Settings className="w-4 h-4 text-slate-500" />
-                            الإعدادات
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 text-red-600 focus:text-red-700 cursor-pointer transition-colors focus:bg-red-50 h-10" onClick={handleLogout}>
-                            <LogOut className="w-4 h-4" />
-                            تسجيل الخروج
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+            <div className="p-3 border-t border-slate-800 bg-slate-950/30 min-h-[76px]">
+                {mounted && (
+                    <DropdownMenu dir="rtl">
+                        <DropdownMenuTrigger asChild>
+                            <button 
+                                type="button"
+                                className={`w-full flex items-center gap-3 py-2 px-3 rounded-xl bg-slate-800/50 border border-slate-800 hover:bg-slate-800 transition-colors cursor-pointer group outline-none
+                                    ${isCollapsed ? 'justify-center px-0' : ''}`}
+                                title={isCollapsed ? "ملف الموظف والإعدادات" : undefined}
+                            >
+                                <div className="w-9 h-9 min-w-[36px] bg-green-900/50 rounded-full flex items-center justify-center ring-2 ring-slate-800 group-hover:ring-green-500/30 transition-all shrink-0">
+                                    <User className="w-5 h-5 text-green-500" />
+                                </div>
+                                
+                                {!isCollapsed && (
+                                    <>
+                                        <div className="flex-1 min-w-0 text-right overflow-hidden whitespace-nowrap">
+                                            <p className="text-sm font-bold text-white truncate">موظف التشغيل</p>
+                                            <p className="text-xs text-slate-400 truncate">نشط الآن</p>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors transform rotate-180 shrink-0" />
+                                    </>
+                                )}
+                            </button>
+                        </DropdownMenuTrigger>
+                        
+                        <DropdownMenuContent className="w-56 font-sans font-bold" align={isCollapsed ? "center" : "end"} side="right" sideOffset={18}>
+                            <DropdownMenuItem className="gap-2 cursor-pointer transition-colors focus:bg-slate-100 h-10" onClick={() => router.push('/operator/settings')}>
+                                <Settings className="w-4 h-4 text-slate-500" />
+                                الإعدادات
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="gap-2 text-red-600 focus:text-red-700 cursor-pointer transition-colors focus:bg-red-50 h-10" onClick={handleLogout}>
+                                <LogOut className="w-4 h-4" />
+                                تسجيل الخروج
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </div>
         </aside>
         </>
