@@ -22,12 +22,14 @@ export interface OrderItem {
 export interface Order {
     id: number;
     date: string;
+    time?: string;
     status: OrderStatus;
     serviceType: 'print' | 'stationery' | 'design';
     items: OrderItem[];
     delivery: "pickup" | "home";
     paymentMethod: 'cash' | 'wallet';
     customerName?: string;
+    customerPhone?: string;
     customerEmail?: string;
     totalPrice: number;
     notes?: string;
@@ -54,6 +56,7 @@ export const mockOrders: Order[] = [
         ],
         delivery: "pickup",
         customerName: "أحمد محمد",
+        customerPhone: "01012345678",
         customerEmail: "ahmed@example.com",
         totalPrice: 125.00
     },
@@ -87,6 +90,7 @@ export const mockOrders: Order[] = [
         ],
         delivery: "home",
         customerName: "فاطمة علي",
+        customerPhone: "01123456789",
         customerEmail: "fatima@example.com",
         totalPrice: 465.00
     },
@@ -110,6 +114,7 @@ export const mockOrders: Order[] = [
         ],
         delivery: "pickup",
         customerName: "محمد حسن",
+        customerPhone: "01234567890",
         customerEmail: "mohamed@example.com",
         totalPrice: 255.00
     },
@@ -133,55 +138,11 @@ export const mockOrders: Order[] = [
         ],
         delivery: "home",
         customerName: "سارة خالد",
+        customerPhone: "01512345678",
         customerEmail: "sara@example.com",
         totalPrice: 400.00
     },
-    {
-        id: 7,
-        date: "2026-02-15",
-        status: "confirmed",
-        serviceType: 'stationery',
-        paymentMethod: 'cash',
-        items: [
-            {
-                fileName: "أوراق A4 + أقلام",
-                type: "document",
-                pageCount: 1,
-                color: "bw",
-                sides: "single",
-                binding: "none",
-                quantity: 1,
-                itemPrice: 45.00
-            }
-        ],
-        delivery: "home",
-        customerName: "أحمد محمد",
-        customerEmail: "ahmed@example.com",
-        totalPrice: 45.00
-    },
-    {
-        id: 8,
-        date: "2026-02-14",
-        status: "pending_review",
-        serviceType: 'design',
-        paymentMethod: 'wallet',
-        items: [
-            {
-                fileName: "تصميم شعار شخصي",
-                type: "document",
-                pageCount: 1,
-                color: "color",
-                sides: "single",
-                binding: "none",
-                quantity: 1,
-                itemPrice: 150.00
-            }
-        ],
-        delivery: "pickup",
-        customerName: "أحمد محمد",
-        customerEmail: "ahmed@example.com",
-        totalPrice: 150.00
-    }
+
 ];
 
 export const getMockOrderById = (id: number): Order | undefined => {

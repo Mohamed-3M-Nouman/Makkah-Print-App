@@ -118,24 +118,26 @@ export default function OrdersHistoryPage() {
                             طباعة
                         </button>
                         <button
-                            onClick={() => setActiveTab('stationery')}
-                            className={`px-6 py-3 rounded-[1.5rem] font-black transition-all flex items-center gap-2 ${activeTab === 'stationery' ? 'bg-green-600 text-white shadow-lg' : 'text-slate-500 hover:bg-white'}`}
+                            disabled
+                            title="هذه الخدمة ستتوفر قريباً"
+                            className="px-6 py-3 rounded-[1.5rem] font-black transition-all flex items-center gap-2 text-slate-400 bg-slate-100 opacity-60 cursor-not-allowed"
                         >
                             <ShoppingBag className="w-5 h-5" />
-                            أدوات مدرسة
+                            أدوات (قريباً)
                         </button>
                         <button
-                            onClick={() => setActiveTab('design')}
-                            className={`px-6 py-3 rounded-[1.5rem] font-black transition-all flex items-center gap-2 ${activeTab === 'design' ? 'bg-green-600 text-white shadow-lg' : 'text-slate-500 hover:bg-white'}`}
+                            disabled
+                            title="هذه الخدمة ستتوفر قريباً"
+                            className="px-6 py-3 rounded-[1.5rem] font-black transition-all flex items-center gap-2 text-slate-400 bg-slate-100 opacity-60 cursor-not-allowed"
                         >
                             <Palette className="w-5 h-5" />
-                            تصميم
+                            تصميم (قريباً)
                         </button>
                     </div>
 
                     {/* Sub-filters (Status) */}
                     <div className="flex items-center gap-4 text-sm overflow-x-auto pb-2 scrollbar-hide">
-                        <span className="text-slate-400 font-bold whitespace-nowrap">تصفية حسب الحالة:</span>
+
                         {[
                             { id: 'all', label: 'الكل' },
                             { id: 'active', label: 'طلبات نشطة' },

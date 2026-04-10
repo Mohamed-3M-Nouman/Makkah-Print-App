@@ -19,7 +19,8 @@ import {
     Clock,
     AlertCircle,
     MapPin,
-    Wallet
+    Wallet,
+    Download
 } from "lucide-react";
 
 const statusColors: Record<string, string> = {
@@ -179,12 +180,23 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                                                     </div>
                                                 </div>
                                                 {item.itemPrice && (
-                                                    <div className="text-left w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-none border-dashed border-slate-100">
-                                                        <p className="text-xs font-black text-slate-400 uppercase mb-1">السعر</p>
-                                                        <div className="flex items-baseline justify-end gap-1 font-black text-slate-700 text-lg">
-                                                            {item.itemPrice.toFixed(2)}
-                                                            <span className="text-xs text-slate-500">ج.م</span>
+                                                    <div className="flex flex-col sm:items-end gap-3 text-left w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-none border-dashed border-slate-100">
+                                                        <div>
+                                                            <p className="text-xs font-black text-slate-400 uppercase mb-1">السعر</p>
+                                                            <div className="flex items-baseline justify-end gap-1 font-black text-slate-700 text-lg">
+                                                                {item.itemPrice.toFixed(2)}
+                                                                <span className="text-xs text-slate-500">ج.م</span>
+                                                            </div>
                                                         </div>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="rounded-xl border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800 gap-2 h-9 text-xs font-bold w-fit"
+                                                            onClick={() => alert(`جاري تحميل الملف: ${Array.isArray(item.fileName) ? item.fileName[0] : item.fileName}`)}
+                                                        >
+                                                            <Download className="w-3.5 h-3.5" />
+                                                            تحميل الملف
+                                                        </Button>
                                                     </div>
                                                 )}
                                             </div>
@@ -251,7 +263,13 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                         <div className="bg-green-900 text-white p-8 rounded-[3rem] shadow-2xl space-y-4">
                             <h3 className="text-2xl font-black">تحتاج مساعدة؟</h3>
                             <p className="text-green-100/70 font-medium leading-relaxed">إذا كان لديك أي استفسار حول هذا الطلب، يمكنك التواصل مع الدعم الفني عبر الواتساب.</p>
-                            <Button className="w-full h-14 bg-white text-green-900 hover:bg-green-50 rounded-2xl font-black text-lg">
+                            <Button
+                                className="w-full h-14 bg-white text-green-900 hover:bg-green-50 rounded-2xl font-black text-lg hover:scale-[1.02] transition-transform"
+                                onClick={() => {
+                                    const message = `السلام عليكم، محتاج استفسر عن الطلب رقم: ${order.id}%0A- اسم الملفات: ${order.items.map(i => Array.isArray(i.fileName) ? 'مجموعة صور' : i.fileName).join(', ')}%0A- حالة الطلب: ${statusLabels[order.status]}%0A- تاريخ الطلب: ${order.date}%0A- الإجمالي: ${order.totalPrice} ج.م`;
+                                    window.open(`https://wa.me/201029307444?text=${message}`, '_blank');
+                                }}
+                            >
                                 تواصل معنا
                             </Button>
                         </div>

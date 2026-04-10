@@ -44,10 +44,10 @@ export default function CheckoutPage() {
                 setIsLoading(false);
             } catch (e) {
                 console.error("Failed to parse order data", e);
-                router.push("/dashboard/new");
+                router.push("/home/new");
             }
         } else {
-            router.push("/dashboard/new");
+            router.push("/home/new");
         }
     }, [router]);
 
@@ -74,7 +74,7 @@ export default function CheckoutPage() {
 
         alert("تم استلام طلبك وبانتظار مراجعة التحويل. شكراً لثقتك!");
         localStorage.removeItem('currentOrder');
-        router.push("/dashboard");
+        router.push("/home");
     };
 
     if (isLoading) {

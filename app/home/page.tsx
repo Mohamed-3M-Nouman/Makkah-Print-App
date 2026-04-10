@@ -96,25 +96,10 @@ export default function DashboardPage() {
 
             <main className="flex-1 container mx-auto px-4 py-8 max-w-6xl space-y-12 text-right" dir="rtl">
 
-                {/* Header: Welcome & Wallet */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div className="space-y-2">
-                        <h1 className="text-4xl font-black text-green-900">أهلاً بك، أحمد! 👋</h1>
-                        <p className="text-slate-500 text-lg font-medium">ماذا تود أن نفعل لك اليوم؟</p>
-                    </div>
-
-                    <div className="bg-white p-5 rounded-[2rem] shadow-xl border border-green-50 flex items-center gap-5 min-w-[240px]">
-                        <div className="p-3 bg-green-100 rounded-2xl text-green-600">
-                            <Wallet className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <p className="text-xs font-black text-slate-400 mb-1 leading-none uppercase">رصيد المحفظة</p>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-3xl font-black text-green-600 leading-none">125.50</span>
-                                <span className="text-sm font-bold text-green-800">ج.م</span>
-                            </div>
-                        </div>
-                    </div>
+                {/* Header: Welcome */}
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-4xl font-black text-green-900">أهلاً بك، أحمد! 👋</h1>
+                    <p className="text-slate-500 text-lg font-medium">ماذا تود أن نفعل لك اليوم؟</p>
                 </div>
 
                 {/* Section A: Service Launcher */}

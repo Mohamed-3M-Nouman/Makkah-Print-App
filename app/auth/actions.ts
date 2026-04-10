@@ -33,7 +33,7 @@ export async function signup(formData: FormData): Promise<{ error?: string } | v
     cookieStore.set('user_role', 'customer', { path: '/' });
 
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    redirect('/?registered=true')
 }
 
 export async function signout(): Promise<void> {

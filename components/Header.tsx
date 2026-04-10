@@ -38,7 +38,7 @@ export default function Header({
             <div className="container mx-auto px-4 py-3">
                 <div className="flex justify-between items-center">
                     {/* Logo and Brand */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push(showLogout ? '/home' : '/')}>
                         <Image
                             src="/logo.png"
                             alt="مركز مكة للطباعة"

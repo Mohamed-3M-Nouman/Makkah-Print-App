@@ -46,6 +46,7 @@ export default function NewOrderPage() {
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
     const [delivery, setDelivery] = useState<"pickup" | "home">("pickup");
     const [isGlobalLoading, setIsGlobalLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const getPdfPageCount = async (file: File): Promise<number> => {
         if (typeof window === "undefined") return 1;
@@ -208,6 +209,8 @@ export default function NewOrderPage() {
             return;
         }
 
+        setIsSubmitting(true);
+
         const serializableItems = orderItems.map(item => ({
             id: item.id,
             fileNames: item.files.map(f => f.name),
@@ -225,8 +228,11 @@ export default function NewOrderPage() {
             grandTotal: totalPrice + (delivery === "home" ? PRICING_CONFIG.delivery : 0)
         };
 
-        localStorage.setItem('currentOrder', JSON.stringify(orderData));
-        router.push("/dashboard/checkout");
+        // Simulate a brief delay for better UX
+        setTimeout(() => {
+            localStorage.setItem('currentOrder', JSON.stringify(orderData));
+            router.push("/home/checkout");
+        }, 1000);
     };
 
     return (
@@ -655,10 +661,20 @@ export default function NewOrderPage() {
 
                                     <Button
                                         onClick={handleSubmit}
-                                        className="w-full bg-yellow-500 hover:bg-yellow-400 text-green-950 font-black text-3xl py-10 rounded-3xl shadow-2xl transition-all transform active:scale-95 group"
+                                        disabled={isSubmitting}
+                                        className="w-full bg-yellow-500 hover:bg-yellow-400 text-green-950 font-black text-3xl py-10 rounded-3xl shadow-2xl transition-all transform active:scale-95 group disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        تأكيد وبدء الطباعة
-                                        <Plus className="w-8 h-8 mr-4 group-hover:rotate-90 transition-transform" />
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="w-8 h-8 mr-4 animate-spin" />
+                                                جاري المعالجة...
+                                            </>
+                                        ) : (
+                                            <>
+                                                تأكيد وبدء الطباعة
+                                                <Plus className="w-8 h-8 mr-4 group-hover:rotate-90 transition-transform" />
+                                            </>
+                                        )}
                                     </Button>
                                 </CardContent>
                             </Card>
